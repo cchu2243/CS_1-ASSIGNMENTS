@@ -1,0 +1,145 @@
+// ******************
+// Catherine Chu
+// cjc2243
+// CreditCard.java
+// This program creates a method for testing a credit card
+// 09/26/2017
+// ******************
+
+public class CreditCard{
+    
+    //instance variables 
+     private String number; // the credit card number is stored as a string
+     private boolean valid; // boolean is stored as being valid or not
+     private int errorCode;
+      
+     //constructor     
+     public CreditCard(String creditCardNumber){ // scope 
+         number = creditCardNumber; // scope now expanded
+         valid = true;
+         errorCode = 0;
+         
+     }
+    
+    // methods 
+    
+    // The first digit must be a 4    
+    private void check1(){  
+        if (number.charAt(0) != '4'){ // do not need to convert to int
+            valid = false;
+            errorCode = 1;
+            
+        }
+    }
+    
+    // The fourth digit should be one larger than the fifth digit   
+    private void check2(){ 
+        if (Integer.parseInt(number.substring(3,4))!=
+            (1+ Integer.parseInt(number.substring(4,5)))){
+            valid = false;
+            errorCode = 2;
+        }
+           
+        }
+    
+    // The product of 1st, 5th and 9th digits should be 24
+    private void check3(){ 
+        int one = Integer.parseInt(number.substring(0,1));
+        int five = Integer.parseInt(number.substring(4,5));
+        int nine = Integer.parseInt(number.substring(8,9));
+        
+        if (one * five * nine != 24){
+            valid = false;
+            errorCode = 3;
+        }
+    }
+    
+   // The sum of all digits must be evenly divisible by 4    
+    private void check4(){ 
+        long num = Long.parseLong(number);
+        long sum = 0;
+        
+        while (num >0){  // while the number is greater than zero
+            sum = sum + (num%10); // sums all digits
+            num = num/10;
+                    
+        } 
+        
+       if ((sum%4) !=0){ // checks if divisible by four
+                valid = false;
+                errorCode = 4;
+            } 
+    }
+    
+    // The sum of the first four digits must be one less
+    // than the sum of the last four digits
+    private void check5(){
+        int one= Integer.parseInt(number.substring(0,1));        
+        int two = Integer.parseInt(number.substring(1,2));
+        int three = Integer.parseInt(number.substring(2,3));
+        int four = Integer.parseInt(number.substring(3,4));
+        int firstSum = one + two + three + four; 
+        
+        int nine = Integer.parseInt(number.substring(8,9));
+        int ten = Integer.parseInt(number.substring(9,10));
+        int eleven = Integer.parseInt(number.substring(10,11));
+        int twelve = Integer.parseInt(number.substring(11,12));
+        int secondSum = nine + ten + eleven + twelve; 
+        
+        if ((1 + firstSum) != secondSum){
+            valid = false;
+            errorCode = 5;
+        }
+        
+    }
+    
+    // If you treat the first two digits as a two-digit number
+    // and the seventh and eight digits as a two digit number
+    // their sum must be 100
+    private void check6(){
+        int first = Integer.parseInt(number.substring(0,2));
+        int second = Integer.parseInt(number.substring(6,8));
+        
+        if (first + second != 100){
+            valid = false;
+            errorCode = 6;
+        }
+        
+    }
+    
+    
+    // This public method calls the six support methods
+    // to check if the number is valid 
+    public void check(){        
+        check1();        
+        if (errorCode ==0){
+          check2();  
+        }
+        if (errorCode == 0){
+            check3();
+        }
+        if (errorCode == 0){
+            check4();
+        }    
+        if (errorCode == 0){
+            check5();
+        }
+        if (errorCode == 0){
+            check6();
+        }
+                        
+    }
+        
+    // This is an accessor method for the IV valid
+    public boolean isValid(){
+        
+        return valid;
+    }
+        
+    // This is an accessor method for the errorCode
+    public int getErrorCode(){
+        
+         return errorCode; 
+    }
+      
+  }
