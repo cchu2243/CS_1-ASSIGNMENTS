@@ -1,0 +1,60 @@
+// ************************************
+// This program creates talk objects to be compared 
+// Written by: Catherine Chu
+// 11/16/2017
+// ************************************
+
+import java.util.Scanner;
+import java.util.ArrayList;
+import java.io.*; 
+
+public class Talk implements Comparable<Talk>{
+
+    public String name;
+    public int startTime;
+    public int endTime;
+    
+    // create talk objects
+    public Talk(String name, int startTime, int endTime){
+        
+        this.name = name;
+        this.startTime = startTime;
+        this.endTime = endTime;        
+     }
+    
+    // makes sure that talks are organized by increasing end time
+    public int compareTo(Talk other){
+        if (this.getEndTime() > other.getEndTime()){  
+            return 1;
+        }
+        else if (this.getEndTime() < other.getEndTime()){ 
+            return -1;
+        }
+        else{  
+            return 0;
+        }
+    }
+    
+    // accessor methods 
+    public String getName(){
+        return name;
+    }
+    
+    public int getStartTime(){
+        return startTime;
+    }
+    
+    public int getEndTime(){
+        return endTime;
+    }
+  
+    // allows the talk objects to be printed once organized
+    public String toString(){
+        String output = String.format("%s", name);
+        output += String.format("%10d", startTime);
+        output += String.format("%10d", endTime);
+        return output; 
+
+    } 
+    
+}
