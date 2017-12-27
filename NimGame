@@ -1,0 +1,76 @@
+/*****************************************
+ * Nim Game
+ * This program writes the game class to play Nim
+ * Written by Catherine Chu
+ * UNI: cjc2243
+ * 10/13/2017
+ 
+ ****************************************/ 
+
+import static java.lang.Math.*;
+import java.util.Scanner;
+
+public class Game{
+    
+    private int marbles;
+    private Human humanPlayer; // human player
+    private Computer computerPlayer; // computer player    
+     
+   
+    // constructor   
+    public Game(int difficulty){
+       marbles = (int)(Math.random()* (100-10) +10);
+       humanPlayer = new Human();
+       computerPlayer = new Computer(difficulty); 
+       }
+    
+    // who goes first   
+    public int firstTurn(){         
+        int p1 = (int)(Math.random()*2 );
+            return p1;
+           
+    }
+    
+    // methods for game 
+    
+    // start new game          
+    public void play(){         
+        int whoGoes = firstTurn(); // gets first player
+              
+        // changes turns while game is live
+        while (marbles > 0){
+            
+            // computer turn
+            if (whoGoes==1){ 
+            computerPlayer.move(marbles);
+            marbles = marbles - computerPlayer.getChoice();
+            whoGoes= 0; // change turns
+            }
+            
+            // human turn
+            else{ 
+                humanPlayer.move(marbles); 
+                marbles = marbles - humanPlayer.getChoice();
+                whoGoes = 1; // change turns
+         }             
+                                      
+        }
+        
+        // ends game
+        System.out.println("Game over!");
+        
+        // human lost on turn
+        if (whoGoes==1){ 
+            System.out.println("You lost!");
+       }
+        
+        // computer lost on turn
+        else{ 
+            System.out.println("You won!"); 
+        }
+             
+            
+            
+        }
+    }
+          
