@@ -1,0 +1,55 @@
+public class Computer{
+    
+    private int mode;
+    private int choice;
+    
+    public Computer(int m){
+        mode = m;
+        choice = -1;              
+                
+    }
+    
+    // computer turn   
+    public void move(int marblesLeft){
+        System.out.println("There are " + marblesLeft + 
+                               " marbles in the pile");
+        
+        // play stupid
+        // also allows random move when there are 2^n - 1 marbles left         
+        if (mode == 1 || marblesLeft==(int)(Math.pow(2, marblesLeft))-1){ 
+            choice =  (int)(Math.random()*(marblesLeft/2) + 1);
+            marblesLeft -=choice;
+    
+        }
+        
+        // play smart               
+        if (mode == 2){
+            
+            
+            // determining proper choice
+            int temp = 0;
+            for (int exp=2; exp<=5 && temp < marblesLeft/2; exp++){
+                
+                temp = (int)(Math.pow(2,exp)-1);                 
+              
+            }  
+                        
+            choice= marblesLeft -temp;
+            
+            // compensating for values excluded from "exp" range
+            if (marblesLeft==2 || marblesLeft==1){
+                choice = 1;
+            }
+                                      
+        }
+        
+        // tells human what the computer chose 
+        System.out.println("The computer picked " + choice );
+    }
+                                                                                            
+    public int getChoice(){        
+        return choice;
+    }
+    
+       
+}
