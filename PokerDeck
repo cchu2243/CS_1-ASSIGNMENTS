@@ -1,0 +1,49 @@
+//****************************
+// This program creates a deck of 52 cards for poker
+// Written by: Catherine Chu
+// UNI: cjc2243
+// 10/29/2017
+//****************************
+public class Deck {
+	
+	private Card[] cards;
+	private int top; 
+
+	// makes a 52 card deck
+	public Deck(){    
+        cards = new Card[52];
+        int counter = 0;
+        int top = 0;
+        for (int i = 1; i<=4; i++){
+            for (int j =1; j<=13; j++){
+                cards[counter] = new Card(i,j);
+                counter++;
+            }
+               
+        }
+
+	}
+	
+    // randomly changes indexes of cards to shuffle
+	public void shuffle(){
+        for (int i = 0; i < 1000; i++){
+            // gets a card at a random index
+            int randomIndex1 = (int)(Math.random()* 51);
+            int randomIndex2 = (int)(Math.random()*51);
+            Card temp = cards[randomIndex1];
+            
+            // switches card at i with the card at random index
+            cards[randomIndex1]=cards[randomIndex2];
+            cards[randomIndex2]= temp;        
+        }
+	
+	}
+	
+    // "deals" card by changing the index of the top of the deck
+	public Card deal(){
+        top++;
+        return cards[top-1];
+
+	}
+
+}
