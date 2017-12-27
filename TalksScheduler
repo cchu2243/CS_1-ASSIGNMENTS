@@ -1,0 +1,94 @@
+// ************************
+// This program schedules the maximum amount of talks for a conference
+// Written by: Catherine Chu
+// 11/16/2017
+// ************************
+
+import java.util.Scanner;
+import java.util.ArrayList;
+import java.io.*;
+import java.util.Collections;
+
+public class Scheduler{
+
+
+    public static ArrayList<Talk> makeTalks(String filename) throws IOException{ 
+        
+        // reads file
+        ArrayList<Talk>talks =  new ArrayList<Talk>();
+        FileReader reader = new FileReader(filename);
+        BufferedReader bufferedReader = new BufferedReader(reader);
+        String line;  
+        try{  
+            
+        // make talk objects and puts them into an ArrayList    
+        while ((line = bufferedReader.readLine()) != null) {           
+            String[] temp = line.split("\\s+");
+            String name = temp[0]; 
+            String tempStartTime = temp[1];
+            String tempEndTime = temp[2];
+            
+            // checks 24hr format
+            if (tempStartTime.length() == 4 && tempEndTime.length() == 4
+               && name.length() > 0){
+                int startTime = Integer.parseInt(temp[1]);
+                int endTime = Integer.parseInt(temp[2]);                      
+                talks.add(new Talk(name, startTime, endTime));             
+            }
+            
+            else{        
+                System.out.println("The file's descriptions do " +
+                                   "not reflect the name + 24 hour format");
+                System.exit(1);
+                }
+        }
+        return talks;
+            }
+        
+        // catch all exceptions        
+        catch(FileNotFoundException e){
+            System.out.println("Please input a valid file, like talks.txt");
+            System.exit(1);  
+        }
+        catch(ArrayIndexOutOfBoundsException a){
+            System.out.println("The file has insufficient descriptions");
+            System.exit(1); 
+        }
+        catch(IllegalArgumentException i){
+            System.out.println("The file's descriptions are in" 
+                               + " the wrong format");
+            System.exit(1); 
+        }
+        catch(Exception f){
+            System.out.println("Something is wrong with the file");
+            System.exit(1);
+        }
+        
+        // closes everything that was opened before the try loop
+        finally{
+            reader.close();
+            bufferedReader.close();            
+            return talks;
+        }
+    }
+    
+    // schedules the optimal number of talks 
+    public static ArrayList<Talk> scheduleTalks(ArrayList<Talk> talks){
+        ArrayList<Talk> scheduledTalks = new ArrayList<Talk>();
+        Collections.sort(talks);
+        scheduledTalks.add(talks.get(0));
+              
+        int i = 0; // index for scheduledTalks
+        int j = 1; // index for talks
+        while (j < talks.size()){
+            if (scheduledTalks.get(i).getEndTime() <= 
+                talks.get(j).getStartTime()){
+                scheduledTalks.add(talks.get(j));
+                i++;
+            }            
+            j++;            
+        }
+        return scheduledTalks;
+    }
+            
+}
