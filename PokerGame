@@ -1,0 +1,358 @@
+//****************************
+// This program plays a game of video poker
+// Written by: Catherine Chu
+// UNI: cjc2243
+// 10/29/2017
+//****************************
+
+import java.util.Scanner;
+import java.util.ArrayList;
+import java.util.Collections;
+
+public class Game {
+	
+	private Player p;
+	private Deck cards;
+    private int counter;
+    private boolean duplicates;
+    private boolean order;
+    private String again;
+    public double bankroll;
+    private double bet;
+    
+    private boolean isTesting;
+    private Scanner in;
+    private ArrayList<Card> hand;
+	
+	
+	public Game(String[] testHand){
+        isTesting = true;
+        Card card; // new object of type card
+        hand = new ArrayList<Card>();
+        int rank = 0;
+        int suit = 0;       
+        char suitInput;
+        String rankInput;
+        // convert elements in the array 
+        for (int i= 0; i<5; i++){
+            suitInput = testHand[i].charAt(0); 
+            rankInput = testHand[i].substring(1);
+            
+            // converts rank to an int
+            rank = Integer.parseInt(rankInput);
+            
+            // converts string input to proper suit integer
+            if (suitInput == 'c'){
+                suit = 1;
+            }
+            else if (suitInput == 'd'){
+                suit = 2;
+            }
+            else if (suitInput == 'h'){
+                suit = 3;
+            }
+            else if (suitInput == 's'){
+                suit = 4;
+            }
+            else {
+                System.out.println("Invalid input");
+            }
+            
+            // makes new card from input and adds it to the player's hand
+            card = new Card (suit, rank);
+            hand.add(card);
+        }
+        p = new Player(50);
+    }
+             	
+	public Game(){ 
+        counter = 0;
+        duplicates = false;
+        order = false;
+        again = "Y";
+		isTesting = false;
+	}
+	
+	public void play(){
+        if (isTesting) {
+            System.out.println(checkHand(hand));
+            return;
+        }
+        // start game               
+        in = new Scanner(System.in);               
+        System.out.println("Welcome to Video Poker!");  
+        
+        // set player's balance
+        System.out.println("How many tokens would you like to start out with?");        
+        bankroll = in.nextDouble();  
+        p = new Player(bankroll);
+        System.out.println("Your balance is " + bankroll );    
+        
+        // plays game while the player wants to and still can play 
+        while (again.toLowerCase().equals("y") && bankroll > 0){
+            
+            tokens();
+            
+            // new deck
+            cards = new Deck();
+            cards.shuffle();
+ 
+            // new hand
+            for (int i = 0; i<5; i++){
+                p.addCard(cards.deal());       
+            } 
+            
+            // get the hand from Player and puts it in proper order     
+            hand = p.getHand();               
+            Collections.sort(hand);
+            System.out.println("Your hand is as follows: ");
+            
+            // tell user what their hand is         
+            for (int i = 0 ; i< 5; i++){
+                System.out.println(hand.get(i));
+            }
+            
+            // replace any cards and checks for winning cards
+            replace();
+            checkHand(hand);
+            
+            // allows for multiple rounds
+            System.out.println("Would you like to play again? Y/N");
+            again = in.nextLine();
+            counter = 0;
+            p.clearHand();
+       }
+       
+       // close game
+       //if (again.toLowerCase().equals("n")){ 
+       System.out.println("Thanks for playing!");
+       // }
+	
+    }
+    
+    // player makes a bet
+    public void tokens(){
+              
+        System.out.println("How many tokens would you like to bet this round?" +
+                            " Please bet between 1-5 tokens");      
+        double bet = in.nextDouble(); 
+        
+        
+        // ensures proper bet was made 
+        if (bet <= 5.0 && bet >= 1.0 && bet <= bankroll){
+            p.bet(bet);
+            bankroll = p.getBankroll();
+            System.out.println("You've bet " + bet + " tokens" );            
+        }
+        
+        else{
+            System.out.println("Invalid input. Bet between 1-5 tokens" +
+                              " within your balance of " + bankroll + 
+                               " tokens");
+            bet = in.nextDouble();
+        }        
+        in.nextLine();  
+    }
+    
+    // player can remove cards they don't want 
+    public void replace(){        
+        int temp = 0; // ensures no more than 5 replacements occur
+        int twice = 0; // ensures double replacements don't occur
+        ArrayList <Integer> repeat = new ArrayList<Integer>();
+        
+        System.out.println("Do you want to replace any cards? Y/N");
+        String answer = in.nextLine();
+                
+        // takes care of invalid inputs
+        while (answer.toLowerCase().equals("n") == false){
+            if (answer.toLowerCase().equals("y") == false){
+                System.out.println("Invalid input. If you'd like to replace " +
+            	" a card input Y. If you don't want to replace anything, input N");
+                answer = in.nextLine();
+            }            
+            else if (answer.toLowerCase().equals("y")){ //answer = yes
+                System.out.println("Input the position of the card you want" +
+                                    " to replace (0-4)");
+
+                int replace = in.nextInt();
+                in.nextLine();
+                twice = 0;
+                                
+                repeat.add(replace);
+                System.out.println(replace);
+                
+                if (replace >=0 && replace <=4){
+                    for (int elem : repeat){
+                        if (elem == replace){
+                        twice++; 
+                        }
+                    }
+                    if (twice > 1){
+                        System.out.println("You cannot replace the same card" +
+                                          " twice. Input valid index ");                        
+                    }
+                    else{ 
+                        hand.set(replace, null);
+                        hand.add(cards.deal());
+                        System.out.println(hand);
+                        temp++;
+                    }                                                       
+                }
+                else{
+                    System.out.println("Invalid input. Please input a number 0-4");
+                    replace = in.nextInt();
+                } 
+                if (temp <=4){
+                    System.out.println("Do you want to replace any more cards? Y/N");
+                    answer = in.nextLine();
+                    }
+                else{
+                    System.out.println("You cannot replace any more cards");
+                    answer = "n";
+                }
+            }
+        }
+       
+        // if they're done replacing - show them the new hand
+       while (hand.contains(null)){
+           hand.remove(null);
+            }
+        
+        System.out.println("This is the hand that will be tested: ");
+        Collections.sort(hand);        
+        for (int i = 0 ; i< 5; i++){
+            System.out.println(hand.get(i));
+        }                      
+    }
+    
+    // checks all methods
+	public String checkHand(ArrayList<Card> hand){
+        String outcome = " ";
+        count(hand);
+        boolean royalFlush = royalFlush(hand);
+        boolean straightFlush = straightFlush(hand);
+        boolean straight = straight(hand);
+        boolean flush = flush(hand);
+               
+    	royalFlush(hand);
+        
+        if (royalFlush == true){
+            p.winnings(250.0);
+            outcome = "You have a royal flush!";
+        }
+        else if (straightFlush == true){
+            p.winnings(50.0);
+            outcome = "You have a straight flush!";
+        }
+        else if (counter == 12){
+            p.winnings(25.0);
+            outcome = "You have four of a kind!";
+        }
+        else if (counter == 8){
+            p.winnings(6.0);
+            outcome =  "You have a full house!";
+        }
+        else if (flush == true){
+            p.winnings(5.0);
+            outcome = "You have a flush!";
+        }
+        else if (straight == true){
+            p.winnings(4.0);
+            outcome = "You have a straight!";
+        }
+        else if (counter == 6){
+            p.winnings(3.0);
+            outcome = "You have three pairs!";
+        }
+        else if (counter == 4){
+            p.winnings(2.0);
+            outcome = "You have two pairs!";
+        }
+        else if (counter == 2){
+            p.winnings(1.0);
+            outcome = "You have a pair!";
+        }
+        else{
+            outcome = "Sorry! No matches!";
+        }
+        
+        if (isTesting) { return outcome; }
+        
+        System.out.println(outcome);
+        bankroll = p.getBankroll();
+        System.out.println("Your balance is now " + bankroll + " tokens " );
+              
+        return outcome; 		       
+	}
+	
+    // handles all of the pair possiblities
+	private void count(ArrayList<Card> hand){
+        duplicates = false;
+        for (int i = 0; i<5; i++){
+        	for (int j =0; j<5; j++){ // look here
+            	if ((hand.get(i).getRank() == hand.get(j).getRank()) && (i != j)){       
+                	counter++;
+                    duplicates = true;
+                }
+            }
+        }       
+    }
+    
+    // tests for straights    
+    private boolean straight(ArrayList<Card> hand){
+        if (duplicates!=true && 
+        	hand.get(0).getRank() + 4 == hand.get(4).getRank() ){            	
+            	order = true;
+                return true;
+            }
+        else if (hand.get(0).getRank() == 1 && duplicates!=true && 
+                hand.get(1).getRank() + 3 == hand.get(4).getRank()){
+            order =true;
+            return true;
+        }
+        else{
+            return false;
+        }        
+    }    
+    // tests for flushes
+    private boolean flush(ArrayList<Card> hand){
+        int temp = 0;
+    	for (int i= 1; i<5; i++){
+        	if (hand.get(i-1).getSuit() == hand.get(i).getSuit()){
+                temp++;
+                if (temp == 4){
+                     return true;
+                }               
+            }     
+        }
+        return false;
+    }
+    
+    private boolean straightFlush(ArrayList<Card> hand){
+    	boolean flush = flush(hand);
+        boolean straight = straight(hand);
+        if (flush!=true || order!=true){
+        	return false; 
+        }
+        else{
+            return true;
+        }
+    }
+    
+    private boolean royalFlush(ArrayList<Card> hand){
+        boolean flush = flush(hand);        
+    	if (hand.get(0).getRank() == 1 && hand.get(4).getRank() == 13){
+            
+        	for (int i = 1; i<5; i++){
+                
+            	if (duplicates!= true && flush == true &&
+                	hand.get(1).getRank() + 3 == hand.get(4).getRank()){  
+                    
+                    	return true;
+                    }
+                }
+            }
+        return false;         
+        }
+    
+    }
