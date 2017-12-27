@@ -1,0 +1,63 @@
+//****************************
+// This program creates a player class to play a game of poker
+// Written by: Catherine Chu
+// UNI: cjc2243
+// 10/29/2017
+//****************************
+
+import java.util.ArrayList;
+
+
+public class Player {
+	
+		
+	private ArrayList<Card> hand; // the player's cards
+	private double bankroll;
+    private double bet;
+
+    // makes a player with a balance
+	public Player(double b){
+        hand = new ArrayList<Card>(); // associated hand
+        bankroll = b; 
+   
+	}
+
+    // makes a player's hand
+	public void addCard(Card c){
+        hand.add(c);
+	}
+
+    // remove card from player's hand
+	public void removeCard(Card c){
+        hand.remove(c); 
+    }
+		
+    public ArrayList<Card> getHand(){
+        return hand;
+    }
+    
+    // player makes a bet
+    public void bet(double amt){
+            bet = amt;
+            bankroll = bankroll - bet;
+    }
+
+    //	adjust bankroll if player wins
+    public void winnings(double odds){
+        if (odds > 0.00){
+            bankroll += (odds*bet);
+        }
+        
+    } // if player has no odds, they lose all bets
+
+    public void clearHand(){
+        hand.clear();
+    }
+    
+    // return current balance of bankroll
+    public double getBankroll(){
+            return bankroll;
+            
+        }
+
+}
