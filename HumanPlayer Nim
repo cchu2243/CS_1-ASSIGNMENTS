@@ -1,0 +1,59 @@
+/*****************************************
+ * Human Nim player
+ * This program allows a human to play Nim
+ * Written by: Catherine Chu
+ * UNI: cjc2243
+ * 10/13/2017
+ 
+ ****************************************/ 
+ import java.util.Scanner;
+
+public class Human{
+   
+    private int choice;
+    private Scanner input;
+        
+    public Human(){
+        input=new Scanner(System.in); 
+        choice = -1; 
+  
+    }
+    
+    // human turn
+    public void move(int marblesLeft){
+        System.out.println("There are " + marblesLeft + 
+                           " marbles left in the pile");        
+        System.out.println("How many marbles do you want to take?");
+        choice = input.nextInt();
+        
+        // if human can still win
+        if (marblesLeft!=1){
+            
+            // ensures that human doesn't pick a negative number 
+            // or a number greater than half the pile 
+            while (choice>marblesLeft/2 || choice <= 0){
+                System.out.println("Invalid input. Please pick a between "
+                                  + (marblesLeft/2) + " and 1");
+                choice = input.nextInt();
+            }
+            marblesLeft= marblesLeft - choice; 
+        }
+        
+        // if human is going to lose, allows them to pick the last marble
+        else{
+            
+            while (choice>1 || choice<=0){
+                System.out.println("Invalid input. Please pick last marble");
+                choice = input.nextInt();
+            }
+            marblesLeft = marblesLeft - choice;
+        }
+        
+            
+        }
+ 
+    public int getChoice(){ 
+        return choice;
+    }
+    
+}   
